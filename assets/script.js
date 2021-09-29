@@ -11,14 +11,10 @@
 // ]
 
 // html selectors 
-const textarea = $('textarea')
+const templateContainer = $('.template-container')
 
 
-// localstorage tools
-const newObj = { values: [], string: '' }
-const lsKey = 'template'
-const getLocalStorage = () => JSON.parse(localStorage.getItem(lsKey)) || []
-const setLocalStorage = (arr) => localStorage.setItem(lsKey, JSON.stringify(arr))
+
 
 
 // this will find all instances of '{{text}}'
@@ -26,7 +22,9 @@ const setLocalStorage = (arr) => localStorage.setItem(lsKey, JSON.stringify(arr)
 const collectAllInstances = (str) => str.match(/\{\{(([a-zA-Z]+))\}\}/g)
 const extractVariablesFromString = (str) => {
     const arrOfInstances = collectAllInstances(str)
-    const arrOfValues = arrOfInstances?.map(val => val.match(/\{\{(([a-zA-Z]+))\}\}/)[1])
+    const arrOfValues = arrOfInstances?.map(val => {
+        return { [`${val.match(/\{\{(([a-zA-Z]+))\}\}/)[1]}`]: '' }
+    })
     return arrOfValues
 }
 
@@ -34,10 +32,95 @@ const setVariablesInString = (arr, str) => {
 
 }
 
-const str = 'hello {{sam}} how are you {{today}}'
+// localstorage tools
+const lsKey = 'template'
+const getLocalStorage = () => JSON.parse(localStorage.getItem(lsKey)) || []
+const setLocalStorage = (arr) => localStorage.setItem(lsKey, JSON.stringify(arr))
+const initLocalStorage = () => {
+    const defaultStr = 'create a template using {{this}} pattern to create dynamic {{variables}}'
+    setLocalStorage([{
+        templateFor: 'testing',
+        template: defaultStr,
+        templateValues: extractVariablesFromString(defaultStr)
 
-textarea.on('keyup', (e) => {
+    }])
+}
 
-    const allText = textarea.val()
-    console.log(extractVariablesFromString(allText))
+const buildTemplateInputs = (templateValues) => {
+    const arr = []
+    templateValues.map(value => {
+        for (let [key, val] of Object.entries(value)) {
+            arr.push(`
+            <div class="">
+            <label class="title is-6" htmlFor=${key}>${key}: </label>
+            <input type=text name=${key} placeholder="${val}" aria-label="templateValues" />
+            </div>
+            `)
+        }
+    })
+    return arr.join('')
+}
+
+const init = () => {
+    const existingData = getLocalStorage()
+
+    // seed localStorage with example data if none available
+    if (!existingData.length) {
+        initLocalStorage()
+        init()
+    }
+
+    console.log(existingData)
+
+    // create a new section for each saved template
+    existingData.map(({ templateFor, template, templateValues }, idx) => {
+
+        // create container to store contents of each template
+        const sectionEl = $('<section class="section m-6">')
+        sectionEl.append(`
+        <label class="title is-3" htmlFor=${templateFor}>Name: </label>
+        <input type=text data-idx="${idx}" name="${templateFor}" aria-label="templateFor" value="${templateFor}" >
+        `)
+
+        // add textarea
+        sectionEl.append(`
+        <div class="field mt-3">
+        <label class="label">Layout</label>
+        <div class="control">
+        <textarea class="textarea" data-idx="${idx}" aria-label="template">${template}</textarea>
+        </div>
+        </div>`
+        )
+
+        // add inputs for each variable created
+        const containerEl = $(`<div class="container is-flex is-flex-wrap-wrap mb-6" id=variable-container-${idx}>`)
+
+        if (templateValues.length) {
+            containerEl.append(buildTemplateInputs(templateValues))
+            sectionEl.append(containerEl)
+        }
+
+        sectionEl.attr('data-idx', idx)
+        sectionEl.append(`<button class="button is-large is-fullwidth is-primary is-outlined" data-idx=${idx}>save</button>`)
+        templateContainer.append(sectionEl)
+    })
+}
+init()
+
+templateContainer.on('keyup', (e) => {
+    const skipThese = ['shiftleft', 'space', 'shiftright']
+    if (skipThese.indexOf(e.code.toLowerCase()) !== -1) return
+
+    const idx = e.target.dataset.idx
+
+    const localStorageArr = getLocalStorage()
+    const storedObject = localStorageArr[idx]
+
+    const template = $(`textarea[data-idx="${idx}"]`).val()
+    const templateValues = extractVariablesFromString(template)
+    storedObject.template = template
+    storedObject.templateValues = templateValues
+    setLocalStorage(localStorageArr)
+    $(`#variable-container-${idx}`).empty().append(buildTemplateInputs(templateValues))
+
 })
