@@ -63,46 +63,27 @@ const buildTemplateInputs = (templateValues) => {
 
 const init = () => {
     const existingData = getLocalStorage()
-
     // seed localStorage with example data if none available
     if (!existingData.length) {
         initLocalStorage()
         init()
     }
-
-    console.log(existingData)
-
     // create a new section for each saved template
     existingData.map(({ templateFor, template, templateValues }, idx) => {
-
-        // create container to store contents of each template
-        const sectionEl = $('<section class="section m-6">')
-        sectionEl.append(`
-        <label class="title is-3" htmlFor=${templateFor}>Name: </label>
-        <input type=text data-idx="${idx}" name="${templateFor}" aria-label="templateFor" value="${templateFor}" >
-        `)
-
-        // add textarea
-        sectionEl.append(`
+        // build a section for each template
+        templateContainer.append(`
+        <section class="section m-6" data-idx="${idx}">
+        <label class="title is-3" htmlFor=${templateFor} ">Name: </label>
+        <input type=text data-idx="${idx}" name="${templateFor}" aria-label="templateFor" value="${templateFor}" id="template-for-${idx}" >
         <div class="field mt-3">
         <label class="label">Layout</label>
         <div class="control">
         <textarea class="textarea" data-idx="${idx}" aria-label="template">${template}</textarea>
         </div>
-        </div>`
-        )
-
-        // add inputs for each variable created
-        const containerEl = $(`<div class="container is-flex is-flex-wrap-wrap mb-6" id=variable-container-${idx}>`)
-
-        if (templateValues.length) {
-            containerEl.append(buildTemplateInputs(templateValues))
-            sectionEl.append(containerEl)
-        }
-
-        sectionEl.attr('data-idx', idx)
-        sectionEl.append(`<button class="button is-large is-fullwidth is-primary is-outlined" data-idx=${idx}>save</button>`)
-        templateContainer.append(sectionEl)
+        </div>
+        <div class="container is-flex is-flex-wrap-wrap mb-6" id=variable-container-${idx}>
+        ${/* add any existing values*/templateValues.length && buildTemplateInputs(templateValues)}
+        </div></section>`);
     })
 }
 init()
@@ -110,16 +91,14 @@ init()
 templateContainer.on('keyup', (e) => {
     const skipThese = ['shiftleft', 'space', 'shiftright']
     if (skipThese.indexOf(e.code.toLowerCase()) !== -1) return
-
     const idx = e.target.dataset.idx
-
     const localStorageArr = getLocalStorage()
-    const storedObject = localStorageArr[idx]
 
+    const templateFor = $(`#template-for-${idx}`).val()
     const template = $(`textarea[data-idx="${idx}"]`).val()
     const templateValues = extractVariablesFromString(template)
-    storedObject.template = template
-    storedObject.templateValues = templateValues
+    // update current index
+    localStorageArr[idx] = { ...localStorageArr[idx], templateFor, template, templateValues }
     setLocalStorage(localStorageArr)
     $(`#variable-container-${idx}`).empty().append(buildTemplateInputs(templateValues))
 
