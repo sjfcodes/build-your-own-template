@@ -24,7 +24,7 @@ const lsKey = 'templateTool'
 const getLocalStorage = () => JSON.parse(localStorage.getItem(lsKey)) || []
 const setLocalStorage = (arr) => localStorage.setItem(lsKey, JSON.stringify(arr))
 const initLocalStorage = () => {
-    const defaultStr = 'create a custom template using {{this}} pattern to create {{dynamic}} variables'
+    const defaultStr = 'Hello {{name}},\n\nCreate a custom template using {{this}} pattern to create {{dynamic}} variables!'
     setLocalStorage([{ templateFor: 'first-template', template: defaultStr, templateValues: extractVariablesFromString(defaultStr) }])
 }
 
