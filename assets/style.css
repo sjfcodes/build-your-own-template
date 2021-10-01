@@ -1,3 +1,5 @@
-section {
+.border {
+    padding:.5em;
     border: dashed black 1px;
+    border-radius: .5em;
 }
