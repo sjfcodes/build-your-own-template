@@ -7,7 +7,10 @@ const collectAllInstances = (str) => str.match(/\{\{(([a-zA-Z]+))\}\}/g)
 const extractVariablesFromString = (str) => {
     const arrOfInstances = collectAllInstances(str)
     let valuesObject = {}
-    arrOfInstances?.map((val, idx) => valuesObject = { ...valuesObject, [`${val.match(/\{\{(([a-zA-Z]+))\}\}/)[1]}`]: '' })
+    arrOfInstances?.map((val, idx) => valuesObject = {
+        ...valuesObject,
+        [`${val.match(/\{\{(([a-zA-Z]+))\}\}/)[1]}`]: ''
+    })
     return valuesObject
 }
 
@@ -65,17 +68,19 @@ const init = () => {
         <label class="label">output</label>
         <div class="control">
         <textarea class="textarea" data-idx="${idx}" aria-label="template" id="template-output-${idx}" disabled>${buildTemplateOutput(template, templateValues)}</textarea>
-        </div></div></section>`);
+        </div></div>
+        <button class="button save-template" data-idx="${idx}"">save</button>        
+        </section>`);
     })
 }
 init()
 
-templateContainer.on('keyup', (e) => {
+templateContainer.on('keyup', ({ code, target }) => {
     const skipThese = ['shiftleft', 'space', 'shiftright']
-    if (skipThese.indexOf(e.code.toLowerCase()) !== -1) return
+    if (skipThese.indexOf(code.toLowerCase()) !== -1) return
 
-    const idx = e.target.dataset.idx
-    const { ariaLabel, name, value } = e.target
+    const { ariaLabel, dataset, name, value } = target
+    const { idx } = dataset
 
     const localStorageArr = getLocalStorage()
     const output = $(`#template-output-${idx}`)
@@ -97,3 +102,33 @@ templateContainer.on('keyup', (e) => {
     output.val(buildTemplateOutput(localStorageArr[idx].template, localStorageArr[idx].templateValues))
     setLocalStorage(localStorageArr)
 })
+
+
+
+// const data = { username: 'example' };
+
+// fetch('https://example.com/profile', {
+//   method: 'POST', // or 'PUT'
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   body: JSON.stringify(data),
+// })
+
+
+
+templateContainer.on('click', '.save-template', ({ target }) => {
+    const { idx } = target.dataset
+    console.log(idx)
+})
+const setAuthTokenforDev = () => {
+
+}
+fetch('http://localhost:3001/api/template', {
+    headers: {
+        "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoic2FtMUBlbWFpbC5jb20iLCJfaWQiOiI2MTUzNmEyNDRlNDk2YmNmNjQyYTliMmMifSwiaWF0IjoxNjMzMDI5Mzg4LCJleHAiOjE2MzMxMTU3ODh9.Mibb9kzDvwB9E_En5sf3V0wOZ7p13J9lc6HU12gL954'
+    }
+})
+    .then(response => response.json())
+    .then((data) => console.log(data))
+    .catch(error => console.log(error))
