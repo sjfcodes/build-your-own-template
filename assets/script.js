@@ -162,18 +162,20 @@ const handleKeyup = ({ code, target }) => {
 templateContainer.on('keyup', handleKeyup)
 
 
-templateContainer.on('click', '.save-template', ({ target }) => {
+templateContainer.on('click', '.save-template', async ({ target }) => {
     const { i } = target.dataset
     console.log(i)
-})
-const setAuthTokenforDev = () => {
 
-}
-// fetch('http://localhost:3001/api/template', {
-//     headers: {
-//         "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoic2FtMUBlbWFpbC5jb20iLCJfaWQiOiI2MTUzNmEyNDRlNDk2YmNmNjQyYTliMmMifSwiaWF0IjoxNjMzMDI5Mzg4LCJleHAiOjE2MzMxMTU3ODh9.Mibb9kzDvwB9E_En5sf3V0wOZ7p13J9lc6HU12gL954'
-//     }
-// })
-//     .then(response => response.json())
-//     .then((data) => console.log(data))
-//     .catch(error => console.log(error))
+    const ls = await getLocalStorage()[i]
+
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoic2FtMUBlbWFpbC5jb20iLCJfaWQiOiI2MTUzNmEyNDRlNDk2YmNmNjQyYTliMmMifSwiaWF0IjoxNjMzMTM1MzI5LCJleHAiOjE2MzM5OTkzMjl9.p0Ih7uXZVok7Ita2h9Cb0SDPa5-GGgX7XmN2qdiumVo'
+
+    const body = { ...ls, templateValues: JSON.stringify(ls.templateValues), author_id: '61536a244e496bcf642a9b2c' }
+    const headers = { "authorization": `bearer ${token}` }
+    axios.post('http://localhost:3001/api/template', body, { headers })
+        .then(({ data }) => console.log(data))
+        .catch(error => console.error(error))
+})
+
+
+
