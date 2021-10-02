@@ -94,18 +94,18 @@ const init = () => {
         // build a section for each template
         templateContainer.append(`
         <div class="is-flex is-align-items-center mb-2">
-            <label class="label is-size-7 mb-0 mr-1" htmlFor=${templateFor}">1. name it</label>
+            <label class="label is-size-7 mb-0 mr-1" htmlFor=${templateFor}">1. name it ⬇️</label>
             <input type=text data-i="${i}" name="${templateFor}" aria-label="templateFor" value="${templateFor}" id="template-for-${i}" >
         </div>
         <section class="section p-0" data-i="${i}">
             <div class="columns pr-3">
                 <div class="field control mb-0 column">
-                    <label class="label is-size-7 mb-0">2. build it</label>
+                    <label class="label is-size-7 mb-0">2. build it ➡️</label>
                     <p class="is-size-7 ml-3">**build a template in the textbox below. To create a variable, wrap a word {{likeThis}} to see the magic.</p>
                     <textarea class="textarea is-small has-fixed-size" data-i="${i}" aria-label="template">${template}</textarea>
                 </div>
                 <div class="container column is-one-third pr-6" >
-                    <label class="label is-size-7 mb-0">3.{{value}} it</label>
+                    <label class="label is-size-7 mb-0">3.{{value}} it ⬇️</label>
                     <p class="is-size-7 ml-3">**enter a value to render in the output below.</p>
                     <div class="is-flex is-flex-wrap-wrap is-justify-content-center template-values" id="variable-container-${i}">
                         ${buildTemplateInputs(templateValues, i)}
@@ -114,7 +114,7 @@ const init = () => {
             </div>
             <div class="columns">
                 <div class="field control mx-0 column">
-                    <label class="label is-size-7">3. view it</label>
+                    <label class="label is-size-7">3. view it ⬇️</label>
                     <textarea class="textarea is-small has-fixed-size" data-i="${i}" aria-label="template" id="template-output-${i}" readonly>${buildTemplateOutput(template, templateValues)}</textarea>
                 </div>
             </div>
