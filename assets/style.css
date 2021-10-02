@@ -1,5 +1,43 @@
+:root {
+    --dark: rgba(0, 0, 0, 0.295);
+}
+
+body {
+    padding-top:80px;
+    min-height: 95vh;
+    padding-bottom: 100px;
+}
+h1 {
+    position: fixed;
+    width: 93.5vw;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+    border-bottom: 1px solid var(--dark);
+}
+
+.textarea {
+    box-shadow: inset 0px 0px 20px 0px var(--dark) !important;
+}
+.template-values {
+    position: absolute;
+    max-height: 83%;
+    overflow-y: scroll;
+    border-bottom: 1px solid var(--dark);
+    box-shadow: inset 0px 0px 20px 0px var(--dark);
+    padding: 1em;
+}
+
+input {
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.295);
+}
+
 .border {
-    padding:.5em;
-    border: dashed black 1px;
-    border-radius: .5em;
+    border: solid red 1px;
+}
+
+.textarea:not([rows]) {
+    min-height:300px;
 }
