@@ -4,4 +4,4 @@
 
 - Then input the value for `name` to create the final output.
 
-https://samuelfox1.github.io/build-your-own-template/
+https://sjfcodes.github.io/build-your-own-template/
